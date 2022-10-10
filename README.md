@@ -1,7 +1,7 @@
-# C-Mix
-C-Mix for NeurIPS 2022
+# C-Mix: Improving Generalization and Out-of-Distribution Robustness in Deep Regression
 
-C-Mix: Improving Generalization and Out-of-Distribution Robustness in Deep Regression
+C-Mix for NeurIPS 2022 (code will be released by the end of October)
+
 
 If you find this repository useful in your research, please cite the following paper:
 ```
