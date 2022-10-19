@@ -31,7 +31,7 @@ We put all code except Echo and PovertyMap on the `src` folder. Echo and Poverty
 
 
 ### Airfoil
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on Airfoil is:
@@ -40,7 +40,7 @@ python main.py --dataset Airfoil --mixtype kde --kde_bandwidth 1.75 --use_manifo
 ```
 
 ### NO2 
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on NO2 is:
@@ -49,7 +49,7 @@ python main.py --dataset NO2 --mixtype kde --kde_bandwidth 1.2 --use_manifold 0 
 ```
 
 ### Exchange_rate
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on Exchange_rate is:
@@ -59,7 +59,7 @@ python main.py --dataset TimeSeries --data_dir ./data/exchange_rate/exchange_rat
 
 ### Electricity
 
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on Electricity is:
@@ -69,7 +69,7 @@ python main.py --dataset TimeSeries --data_dir ./data/electricity/electricity.tx
 
 ### RCF-MNIST
 
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on RCF-MNIST is:
@@ -78,7 +78,7 @@ python main.py --dataset RCF_MNIST --data_dir ./data/RCF_MNIST --mixtype random 
 ```
 
 ### Crime
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on Crime is:
@@ -87,7 +87,7 @@ python main.py --dataset CommunitiesAndCrime --mixtype kde --kde_bandwidth 4.0 -
 ```
 
 ### Skillcraft
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on Skillcraft is:
@@ -96,7 +96,7 @@ python main.py --dataset SkillCraft --mixtype kde --kde_bandwidth 1.0 --use_mani
 ```
 
 ### DTI
-This dataset can be downloaded via the link in the [Google Drive](). Please put the corresponding datafolder to `src/data`
+This dataset can be downloaded via the link in the [Google Drive](https://drive.google.com/drive/folders/1pTRT7fA-hq6p1F7ZX5oJ0tg_I1RRG6OW?usp=sharing). Please put the corresponding datafolder to `src/data`
 
 
 The command to run C-Mixup on DTI is:
