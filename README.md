@@ -106,7 +106,7 @@ python main.py --dataset Dti_dg --data_dir ./data/dti --mixtype kde --kde_bandwi
 
 ### PovertyMap
 
-To get detailed information of the datasets, please refer to Appendix E of the original [paper](https://arxiv.org/abs/2210.05775v1).
+To get detailed information of the datasets, please refer to Appendix E of the [paper](https://arxiv.org/abs/2210.05775v1) or [original paper](https://arxiv.org/abs/2112.05090).
 
 This code is built upon [LISA](https://github.com/huaxiuyao/LISA) and [Wilds](https://github.com/p-lambda/wilds).
 
@@ -116,4 +116,20 @@ The datasets will be automatically downloaded when running the scripts provided 
 
 ```
 python main.py --dataset poverty --algorithm mixup --data-dir ../../datasets/ --experiment_dir .. --is_kde 1 --kde_bandwidth 0.5
+```
+
+
+### EchoNet
+
+To get detailed information of the datasets, please refer to [website](https://echonet.github.io/dynamic/).
+
+This code is built upon [EchoNet](https://github.com/echonet/dynamic).
+
+Before running, please `cd EchoNet`.
+
+You need to follow the guideline of [website](https://echonet.github.io/dynamic/index.html#access) and download the dataset into `../../EchoNet-Dynamic/` directory first.
+
+The command to run C-Mixup on EchoNet is:
+```
+echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mixtype kde --bandwidth 100.0 --run_test True
 ```
