@@ -129,7 +129,7 @@ Before running, please `cd EchoNet`.
 
 You need to follow the guideline from the [website](https://echonet.github.io/dynamic/index.html#access) and download the dataset into `../../EchoNet-Dynamic/` directory first.
 
-For the preparation you need to install the echonet environment and complete segmentation tasks by running the command:
+For the preparation you need to install the echonet environment and complete segmentation tasks by running the commands:
 ```
 pip install --upgrade --user . 
 python echonet/__main__.py segmentation --save_video
