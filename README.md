@@ -121,13 +121,19 @@ python main.py --dataset poverty --algorithm mixup --data-dir ../../datasets/ --
 
 ### EchoNet
 
-To get detailed information of the datasets, please refer to [website](https://echonet.github.io/dynamic/).
+To get detailed information of the datasets, please refer to the [website](https://echonet.github.io/dynamic/).
 
 This code is built upon [EchoNet](https://github.com/echonet/dynamic).
 
 Before running, please `cd EchoNet`.
 
-You need to follow the guideline of [website](https://echonet.github.io/dynamic/index.html#access) and download the dataset into `../../EchoNet-Dynamic/` directory first.
+You need to follow the guideline from the [website](https://echonet.github.io/dynamic/index.html#access) and download the dataset into `../../EchoNet-Dynamic/` directory first.
+
+For the preparation you need to install the echonet environment and complete segmentation tasks by running the command:
+```
+pip install --upgrade --user . 
+python echonet/__main__.py segmentation --save_video
+```
 
 The command to run C-Mixup on EchoNet is:
 ```
