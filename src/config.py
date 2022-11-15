@@ -91,7 +91,7 @@ dataset_defaults = {
         'output_fun':'Linear',
     },
 
-    'RotateFashionMNIST':{
+    'RCF_MNIST':{
         'batch_size': 64,
         'num_epochs': 30,
         'optimiser_args': {

@@ -137,5 +137,5 @@ python echonet/__main__.py segmentation --save_video
 
 The command to run C-Mixup on EchoNet is:
 ```
-echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mixtype kde --bandwidth 100.0 --run_test True
+echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mixtype kde --bandwidth 50.0 --run_test True
 ```

@@ -9,4 +9,4 @@ echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mi
 echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mixtype random --run_test True
 
 # kde
-echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mixtype kde --bandwidth 100.0 --run_test True
+echonet video --batch_size 10 --device cuda --num_workers 0 --num_epochs 20 --mixtype kde --bandwidth 50.0 --run_test True
