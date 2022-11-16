@@ -163,7 +163,8 @@ dataset_defaults = {
         # mixup
         'mix_alpha': 2.0,
         # dti
-        'sub_sample_batch_max_num': 80,
+        'read_dataset': 1, # input dataset directly
+        'sub_sample_batch_max_num': 100,
         'store_log': 0,
         'task':'domain_generalization',
         'algorithm':'ERM',

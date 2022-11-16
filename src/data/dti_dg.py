@@ -11,11 +11,11 @@ import PIL
 import json
 
 
-from .Dti_dg import datasets
-from .Dti_dg import hparams_registry
+from .Dti_dg_lib import datasets
+from .Dti_dg_lib import hparams_registry
 #from .Dti_dg import algorithms
-from .Dti_dg.lib import misc
-from .Dti_dg.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
+from .Dti_dg_lib.lib import misc
+from .Dti_dg_lib.lib.fast_data_loader import InfiniteDataLoader, FastDataLoader
 
 # ---> https://github.com/mims-harvard/TDC/tree/master/
 
@@ -199,63 +199,105 @@ def get_all_batches(loaders,len_list,name):
         assay_len.append(assay_num)        
     return all_batches,assay_len
 
+DTI_file_name = "DTI_sub100" #"DTI_sub100.pkl"
 ####### modifed from TDC #######
 def get_data_packet(args, train_loaders,in_len,val_loaders,out_len,eval_loaders,test_len):
-    print('Begin get_dti_dg_data_packet')
+    if args.read_dataset:
+        data_packet = read_dti_sub_dataset(args)
+    else:
+        print('Begin construct dti_dg data_packet')
+        data_packet = {}
+
+        ##### train #####
+        train_all_batches,train_all_assay_len = get_all_batches(train_loaders,in_len,'train')
+        tmp1 = torch.cat([sub[0] for sub in train_all_batches])
+        tmp2 = torch.cat([sub[1] for sub in train_all_batches])
+        tmp1 = tmp1.reshape(tmp1.shape[0],-1)
+        tmp2 = tmp2.reshape(tmp2.shape[0],-1)
+
+        print(f'in train, tmp1.shape = {tmp1.shape}, tmp2.shape = {tmp2.shape}')
+        print(f'train_all_assay_len = {train_all_assay_len}, sum(train_all_assay_len) = {sum(train_all_assay_len)}')
+
+        shuffle_idx = np.random.permutation(np.arange(tmp1.shape[0]))
+        data_packet['x_train'] = torch.cat([tmp1,tmp2],dim=1)[shuffle_idx]
+
+        data_packet['y_train'] = torch.cat([sub[2] for sub in train_all_batches]).unsqueeze(1)[shuffle_idx]
+
+        data_packet['idx2assay_train'] = list(torch.tensor([i for i in range(len(train_all_assay_len)) for _ in range(train_all_assay_len[i])])[shuffle_idx])
+
+        print(f"len(data_packet['idx2assay_train']) = {len(data_packet['idx2assay_train'])}")
+        
+        # data_packet['assay2idx_train'] = {loc:torch.nonzero(torch.tensor(data_packet['idx2assay_train'] == loc)).squeeze(-1)
+                                        # for loc in np.unique(data_packet['idx2assay_train'])}
+
+        ###### valid ######
+        valid_all_batches, valid_all_assay_len = get_all_batches(val_loaders,out_len,'valid')
+        tmp1 = torch.cat([sub[0] for sub in valid_all_batches])
+        tmp2 = torch.cat([sub[1] for sub in valid_all_batches])
+        tmp1 = tmp1.reshape(tmp1.shape[0],-1)
+        tmp2 = tmp2.reshape(tmp2.shape[0],-1)
+        shuffle_idx = np.random.permutation(np.arange(tmp1.shape[0]))
+        data_packet['x_valid'] = torch.cat([tmp1,tmp2],dim=1)[shuffle_idx]
+
+        data_packet['y_valid'] = torch.cat([sub[2] for sub in valid_all_batches]).unsqueeze(1)[shuffle_idx]
+
+        ###### test ######
+        test_all_batches,test_all_assay_len = get_all_batches(eval_loaders[0:2],test_len[0:2],'test') # 2021 is too less
+        tmp1 = torch.cat([sub[0] for sub in test_all_batches])
+        tmp2 = torch.cat([sub[1] for sub in test_all_batches])
+        tmp1 = tmp1.reshape(tmp1.shape[0],-1)
+        tmp2 = tmp2.reshape(tmp2.shape[0],-1)
+        shuffle_idx = np.random.permutation(np.arange(tmp1.shape[0]))
+        data_packet['x_test'] = torch.cat([tmp1,tmp2],dim=1)[shuffle_idx]
+        data_packet['y_test'] = torch.cat([sub[2] for sub in test_all_batches]).unsqueeze(1)[shuffle_idx]
+
+        #for debug test
+        idx2assay_test = list(torch.tensor([i for i in range(len(test_all_assay_len)) for _ in range(test_all_assay_len[i])])[shuffle_idx])
+        assay2idx_test_list = [torch.nonzero(torch.tensor(idx2assay_test == loc)).squeeze(-1)
+                                        for loc in np.unique(idx2assay_test)]
+        data_packet['x_test_assay_list'] = [data_packet['x_test'][tmpidx] for tmpidx in assay2idx_test_list]
+        data_packet['y_test_assay_list'] = [data_packet['y_test'][tmpidx] for tmpidx in assay2idx_test_list]
+        # data_packet['idx2assay_test'] = idx2assay_test
+
+        store_dti_sub_dataset(args, data_packet)
+
+    return data_packet
+
+def store_x_y(args, x, y, name):
+    if not os.path.exists(args.data_dir):
+        os.mkdir(args.data_dir)
+    # store
+    join_name = f"{DTI_file_name}_{name}"
+    pickle.dump((x, y), open(os.path.join(args.data_dir, f"{join_name}.pkl"), 'wb'))
+    print(f'Construct {join_name} to {args.data_dir}')
+
+def read_x_y(args, name):
+    join_name = f"{DTI_file_name}_{name}"
+    x, y = pickle.load(open(os.path.join(args.data_dir, f"{join_name}.pkl"), 'rb'))
+    print(f'Read {join_name} from {args.data_dir}')
+    return x, y
+
+def store_dti_sub_dataset(args, data_packet):
+    # pickle.dump((data_packet['x_train'], data_packet['y_train'], data_packet['x_valid'], data_packet['y_valid'], \
+    #     data_packet['x_test'], data_packet['y_test'], data_packet['x_test_assay_list'], data_packet['y_test_assay_list']),\
+    #          open(os.path.join(args.data_dir, DTI_file_name), 'wb'))
+    # print(f'Construct dataset {DTI_file_name} to {args.data_dir}')
+    store_x_y(args, data_packet['x_train'], data_packet['y_train'], 'train')
+    store_x_y(args, data_packet['x_valid'], data_packet['y_valid'], 'valid')
+    store_x_y(args, data_packet['x_test'], data_packet['y_test'], 'test')
+    store_x_y(args, data_packet['x_test_assay_list'], data_packet['y_test_assay_list'], 'test_assay_list')
+    
+
+def read_dti_sub_dataset(args):
     data_packet = {}
-
-    ##### train #####
-    train_all_batches,train_all_assay_len = get_all_batches(train_loaders,in_len,'train')
-    tmp1 = torch.cat([sub[0] for sub in train_all_batches])
-    tmp2 = torch.cat([sub[1] for sub in train_all_batches])
-    tmp1 = tmp1.reshape(tmp1.shape[0],-1)
-    tmp2 = tmp2.reshape(tmp2.shape[0],-1)
-
-    print(f'in train, tmp1.shape = {tmp1.shape}, tmp2.shape = {tmp2.shape}')
-    print(f'train_all_assay_len = {train_all_assay_len}, sum(train_all_assay_len) = {sum(train_all_assay_len)}')
-
-    shuffle_idx = np.random.permutation(np.arange(tmp1.shape[0]))
-    data_packet['x_train'] = torch.cat([tmp1,tmp2],dim=1)[shuffle_idx]
-
-    data_packet['y_train'] = torch.cat([sub[2] for sub in train_all_batches]).unsqueeze(1)[shuffle_idx]
-
-    data_packet['idx2assay_train'] = list(torch.tensor([i for i in range(len(train_all_assay_len)) for _ in range(train_all_assay_len[i])])[shuffle_idx])
-
-    print(f"len(data_packet['idx2assay_train']) = {len(data_packet['idx2assay_train'])}")
-    last_sum = 0
-    
-    data_packet['assay2idx_train'] = {loc:torch.nonzero(torch.tensor(data_packet['idx2assay_train'] == loc)).squeeze(-1)
-                                    for loc in np.unique(data_packet['idx2assay_train'])}
-
-    ###### valid ######
-    valid_all_batches, valid_all_assay_len = get_all_batches(val_loaders,out_len,'valid')
-    tmp1 = torch.cat([sub[0] for sub in valid_all_batches])
-    tmp2 = torch.cat([sub[1] for sub in valid_all_batches])
-    tmp1 = tmp1.reshape(tmp1.shape[0],-1)
-    tmp2 = tmp2.reshape(tmp2.shape[0],-1)
-    shuffle_idx = np.random.permutation(np.arange(tmp1.shape[0]))
-    data_packet['x_valid'] = torch.cat([tmp1,tmp2],dim=1)[shuffle_idx]
-
-    data_packet['y_valid'] = torch.cat([sub[2] for sub in valid_all_batches]).unsqueeze(1)[shuffle_idx]
-
-    ###### test ######
-    test_all_batches,test_all_assay_len = get_all_batches(eval_loaders[0:2],test_len[0:2],'test') # 2021 is too less
-    tmp1 = torch.cat([sub[0] for sub in test_all_batches])
-    tmp2 = torch.cat([sub[1] for sub in test_all_batches])
-    tmp1 = tmp1.reshape(tmp1.shape[0],-1)
-    tmp2 = tmp2.reshape(tmp2.shape[0],-1)
-    shuffle_idx = np.random.permutation(np.arange(tmp1.shape[0]))
-    data_packet['x_test'] = torch.cat([tmp1,tmp2],dim=1)[shuffle_idx]
-    data_packet['y_test'] = torch.cat([sub[2] for sub in test_all_batches]).unsqueeze(1)[shuffle_idx]
-
-    #for debug test
-    idx2assay_test = list(torch.tensor([i for i in range(len(test_all_assay_len)) for _ in range(test_all_assay_len[i])])[shuffle_idx])
-    assay2idx_test_list = [torch.nonzero(torch.tensor(idx2assay_test == loc)).squeeze(-1)
-                                    for loc in np.unique(idx2assay_test)]
-    data_packet['x_test_assay_list'] = [data_packet['x_test'][tmpidx] for tmpidx in assay2idx_test_list]
-    data_packet['y_test_assay_list'] = [data_packet['y_test'][tmpidx] for tmpidx in assay2idx_test_list]
-    data_packet['idx2assay_test'] = idx2assay_test
-    
+    # data_packet['x_train'], data_packet['y_train'], data_packet['x_valid'], data_packet['y_valid'], \
+    #     data_packet['x_test'], data_packet['y_test'], data_packet['x_test_assay_list'], data_packet['y_test_assay_list']\
+    #          = pickle.load(open(os.path.join(args.data_dir, DTI_file_name), 'rb'))
+    # print(f'Read dataset {DTI_file_name} from {args.data_dir}')
+    data_packet['x_train'], data_packet['y_train'] = read_x_y(args, 'train')
+    data_packet['x_valid'], data_packet['y_valid'] = read_x_y(args, 'valid')
+    data_packet['x_test'], data_packet['y_test'] = read_x_y(args, 'test')
+    data_packet['x_test_assay_list'], data_packet['y_test_assay_list'] = read_x_y(args, 'test_assay_list')
     return data_packet
 
 def get_hparams(args):

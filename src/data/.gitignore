@@ -1,3 +1,4 @@
 FashionMNIST
 RCF_MNIST
 __pycache__
+.gitignore

@@ -20,4 +20,4 @@ python main.py --dataset CommunitiesAndCrime --mixtype kde --kde_bandwidth 4.0 -
 python main.py --dataset SkillCraft --mixtype kde --kde_bandwidth 1.0 --use_manifold 0 --store_model 1 --read_best_model 0
 
 # dti_dg
-python main.py --dataset Dti_dg --data_dir ../../dti_dg/domainbed/data/ --mixtype kde --kde_bandwidth 20.0 --use_manifold 1 --store_model 1 --read_best_model 0
+python main.py --dataset Dti_dg --data_dir ../../dti_dg/domainbed/data/ --mixtype kde --kde_bandwidth 10.0 --use_manifold 1 --store_model 1 --read_best_model 0

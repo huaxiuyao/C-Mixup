@@ -1,10 +1,8 @@
-from turtle import forward
-# import ipdb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import random 
-import data.Dti_dg.networks as networks
+import data.Dti_dg_lib.networks as networks
 from copy import deepcopy
 
 

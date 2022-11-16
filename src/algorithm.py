@@ -29,11 +29,11 @@ def cal_worst_acc(args,data_packet,best_model_rmse,best_result_dict_rmse,all_beg
         print('worst {} = {:.3f}'.format(args.metrics, worst_acc))
         best_result_dict_rmse['worst_' + args.metrics] = worst_acc
 
-def get_mixup_sample_rate(args, data_packet, device='cuda'):
+def get_mixup_sample_rate(args, data_packet, device='cuda', use_kde = False):
     
     mix_idx = []
     _, y_list = data_packet['x_train'], data_packet['y_train'] 
-    is_np = not isinstance(y_list[0],np.ndarray)
+    is_np = isinstance(y_list,np.ndarray)
     if is_np:
         data_list = torch.tensor(y_list, dtype=torch.float32)
     else:
@@ -43,7 +43,7 @@ def get_mixup_sample_rate(args, data_packet, device='cuda'):
 
     ######## use kde rate or uniform rate #######
     for i in range(N):
-        if args.mixtype == 'kde': # kde
+        if args.mixtype == 'kde' or use_kde: # kde
             data_i = data_list[i]
             data_i = data_i.reshape(-1,data_i.shape[0]) # get 2D
             
@@ -62,7 +62,7 @@ def get_mixup_sample_rate(args, data_packet, device='cuda'):
         ####### visualization: observe relative rate distribution shot #######
         if args.show_process and i == 0:
                 print(f'bw = {args.kde_bandwidth}')
-                print(f'each_rate = {each_rate}')
+                print(f'each_rate[:10] = {each_rate[:10]}')
                 stats_values(each_rate)
             
         mix_idx.append(each_rate)
@@ -83,9 +83,10 @@ def get_batch_kde_mixup_idx(args, Batch_X, Batch_Y, device):
     Batch_packet['x_train'] = Batch_X.cpu()
     Batch_packet['y_train'] = Batch_Y.cpu()
 
-    Batch_rate = get_mixup_sample_rate(args, Batch_packet, device)
+    Batch_rate = get_mixup_sample_rate(args, Batch_packet, device, use_kde=True) # batch -> kde
     if args. show_process:
-        print(f'Batch_rate[0][:20] = {Batch_rate[0][:20]}')
+        stats_values(Batch_rate[0])
+        # print(f'Batch_rate[0][:20] = {Batch_rate[0][:20]}')
     idx2 = [np.random.choice(np.arange(Batch_X.shape[0]), p=Batch_rate[sel_idx]) 
             for sel_idx in np.arange(Batch_X.shape[0]//2)]
     return idx2
