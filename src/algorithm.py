@@ -287,7 +287,7 @@ def train(args, model, data_packet, is_mixup=True, mixup_idx_sample_rate=None, t
                 else:
                     pred_Y = model.forward(mixup_X)
 
-                if args.dataset == 'TimeSeires': # time series loss need scale
+                if args.dataset == 'TimeSeries': # time series loss need scale
                     scale = ts_data.scale.expand(pred_Y.size(0),ts_data.m)
                     loss = loss_fun(pred_Y * scale, mixup_Y * scale)
                 else:    
